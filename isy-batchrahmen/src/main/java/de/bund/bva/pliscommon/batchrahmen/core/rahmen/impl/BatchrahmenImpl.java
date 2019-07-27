@@ -16,6 +16,8 @@
  */
 package de.bund.bva.pliscommon.batchrahmen.core.rahmen.impl;
 
+import static java.util.Objects.requireNonNull;
+
 import java.util.Date;
 import java.util.UUID;
 
@@ -112,6 +114,7 @@ public class BatchrahmenImpl<T extends AufrufKontext> implements Batchrahmen, In
     /**
      * {@inheritDoc}
      */
+    @Override
     public void runBatch(BatchKonfiguration konfiguration, BatchErgebnisProtokoll protokoll)
         throws BatchAusfuehrungsException {
         VerarbeitungsInformationen verarbInfo = new VerarbeitungsInformationen(konfiguration);
@@ -170,14 +173,16 @@ public class BatchrahmenImpl<T extends AufrufKontext> implements Batchrahmen, In
             VerarbeitungsErgebnis ergebnis = null;
             // Ausfuehren, bis Bean keine Datensaetze mehr verarbeitet.
             while ((ergebnis == null || !ergebnis.isAlleSaetzeVerarbeitet())
-                && !(verarbInfo.getLetzterDatensatzNummer() != 0 && verarbInfo.getLetzterDatensatzNummer() == verarbInfo
-                    .getSatzNummer()) && !this.batchAbgebrochen
+                && !(verarbInfo.getLetzterDatensatzNummer() != 0
+                    && verarbInfo.getLetzterDatensatzNummer() == verarbInfo
+                        .getSatzNummer())
+                && !this.batchAbgebrochen
                 && !(this.maximaleLaufzeitUeberschritten = istMaximaleLaufzeitUeberschritten(verarbInfo))) {
                 verarbInfo.incSatzNummer();
 
                 MdcHelper.pushKorrelationsId(UUID.randomUUID().toString());
 
-                ergebnis = verarbInfo.getBean().verarbeiteSatz();
+                ergebnis = requireNonNull(verarbInfo.getBean().verarbeiteSatz());
 
                 MdcHelper.entferneKorrelationsId();
 
@@ -454,7 +459,8 @@ public class BatchrahmenImpl<T extends AufrufKontext> implements Batchrahmen, In
         }
         BatchAusfuehrungsBean bean = (BatchAusfuehrungsBean) this.applicationContext.getBean(beanName);
         if (bean == null) {
-            throw new BatchrahmenKonfigurationException(NachrichtenSchluessel.ERR_KONF_BEAN_PFLICHT, beanName);
+            throw new BatchrahmenKonfigurationException(NachrichtenSchluessel.ERR_KONF_BEAN_PFLICHT,
+                beanName);
         }
         return bean;
     }
@@ -473,6 +479,7 @@ public class BatchrahmenImpl<T extends AufrufKontext> implements Batchrahmen, In
      * @param applicationContext
      *            Der Applikations-Kontext.
      */
+    @Override
     public void setApplicationContext(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
     }
@@ -489,6 +496,7 @@ public class BatchrahmenImpl<T extends AufrufKontext> implements Batchrahmen, In
     /**
      * {@inheritDoc}
      */
+    @Override
     public void afterPropertiesSet() throws Exception {
         this.statusHandler = new StatusHandler(this.transactionManager.getEntityManagerFactory());
     }
@@ -497,6 +505,7 @@ public class BatchrahmenImpl<T extends AufrufKontext> implements Batchrahmen, In
      *
      * {@inheritDoc}
      */
+    @Override
     public void destroy() throws Exception {
         this.batchAbgebrochen = true;
 

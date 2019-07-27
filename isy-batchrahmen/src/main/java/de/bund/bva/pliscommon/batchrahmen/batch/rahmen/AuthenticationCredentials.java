@@ -16,34 +16,36 @@
  */
 package de.bund.bva.pliscommon.batchrahmen.batch.rahmen;
 
+import org.eclipse.jdt.annotation.Nullable;
+
 /**
  * Diese Klasse enthält alle Daten, die für die Authentifizierung eines Batches notwendig sind.
- * 
- * 
+ *
+ *
  */
 public class AuthenticationCredentials {
 
     /**
      * Enthält die Benutzerkennung des Batchbenutzers.
      */
-    private String benutzerkennung;
+    private @Nullable String benutzerkennung;
 
     /**
      * Enthält das Behördenkennzeichen des Batchbenutzers.
      */
-    private String behoerdenkennzeichen;
+    private @Nullable String behoerdenkennzeichen;
 
     /**
      * Enthält das Passwort des Batchbenutzers.
      */
-    private String passwort;
+    private @Nullable String passwort;
 
     /**
      * Liefert das Feld {@link #benutzerkennung} zurück.
      * @return Wert von benutzerkennung
      */
-    public String getBenutzerkennung() {
-        return benutzerkennung;
+    public @Nullable String getBenutzerkennung() {
+        return this.benutzerkennung;
     }
 
     /**
@@ -82,8 +84,8 @@ public class AuthenticationCredentials {
      * Liefert das Feld {@link #behoerdenkennzeichen} zurück.
      * @return Wert von behoerdenkennzeichen
      */
-    public String getBehoerdenkennzeichen() {
-        return behoerdenkennzeichen;
+    public @Nullable String getBehoerdenkennzeichen() {
+        return this.behoerdenkennzeichen;
     }
 
     /**
@@ -99,8 +101,8 @@ public class AuthenticationCredentials {
      * Liefert das Feld {@link #passwort} zurück.
      * @return Wert von passwort
      */
-    public String getPasswort() {
-        return passwort;
+    public @Nullable String getPasswort() {
+        return this.passwort;
     }
 
     /**

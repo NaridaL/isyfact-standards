@@ -30,6 +30,7 @@ import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
 
+import org.eclipse.jdt.annotation.Nullable;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
@@ -43,8 +44,8 @@ import de.bund.bva.pliscommon.batchrahmen.core.konstanten.NachrichtenSchluessel;
 
 /**
  * Erzeugt eine XML-Darstellung für ein {@link BatchErgebnisProtokoll}.
- * 
- * 
+ *
+ *
  */
 public class XmlProtokollGenerator implements ProtokollGenerator {
 
@@ -108,7 +109,7 @@ public class XmlProtokollGenerator implements ProtokollGenerator {
 
     /** Handler zum XML-Schreiben. **/
     private TransformerHandler handler;
-    
+
     /** Der Outputstream zur Datei. **/
     private Writer writer;
 
@@ -120,32 +121,33 @@ public class XmlProtokollGenerator implements ProtokollGenerator {
      *                Probleme beim XML parsen
      * @exception TransformerConfigurationException
      *                Probleme beim XML parsen
-     * @throws UnsupportedEncodingException 
-     *      Falls das UTF-8 Encoding nicht bekannt ist.
+     * @throws UnsupportedEncodingException
+     *             Falls das UTF-8 Encoding nicht bekannt ist.
      */
     public XmlProtokollGenerator(OutputStream outStream) throws SAXException,
         TransformerConfigurationException, UnsupportedEncodingException {
         super();
         SAXTransformerFactory transformerFactory =
             (SAXTransformerFactory) SAXTransformerFactory.newInstance();
-        handler = transformerFactory.newTransformerHandler();
-        Transformer serializer = handler.getTransformer();
+        this.handler = transformerFactory.newTransformerHandler();
+        Transformer serializer = this.handler.getTransformer();
         serializer.setOutputProperty(OutputKeys.INDENT, "yes");
         // Eignenen Writer setzen, auf dem Flush aufgerufen werden kann.
         // Flush für Outputstream führt leider nicht dazu, dass Ausgaben direkt geschrieben werden.
         this.writer = new OutputStreamWriter(outStream, ENCODING_UTF_8);
-        handler.setResult(new StreamResult(writer));
-        handler.startDocument();
-        handler.startElement("", "", ELEM_BATCH_ERGEBNIS, null);
+        this.handler.setResult(new StreamResult(this.writer));
+        this.handler.startDocument();
+        this.handler.startElement("", "", ELEM_BATCH_ERGEBNIS, null);
     }
 
     /**
-     * 
+     *
      * {@inheritDoc}
      */
+    @Override
     public void flusheOutput() {
         try {
-            writer.flush();
+            this.writer.flush();
         } catch (IOException e) {
             throw new BatchrahmenProtokollException(NachrichtenSchluessel.ERR_BATCH_PROTOKOLL, e);
         }
@@ -153,10 +155,11 @@ public class XmlProtokollGenerator implements ProtokollGenerator {
 
     /**
      * Erzeugt Header-Element mit BatchID, Startzeit/Datum sowie Angabe der Parameter (Key/Value).
-     * 
+     *
      * @param protokoll
      *            Das BatchProtokoll
      */
+    @Override
     public void erzeugeStartInfoElement(BatchErgebnisProtokoll protokoll) {
         SimpleDateFormat uhrzeitFormat = new SimpleDateFormat("HH:mm:ss");
         SimpleDateFormat datumFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -174,11 +177,11 @@ public class XmlProtokollGenerator implements ProtokollGenerator {
         atts.addAttribute("", "", ATTR_BATCH_ID, "", protokoll.getBatchId());
         atts.addAttribute("", "", ATTR_PARAMETER, "", parameters);
         try {
-            handler.startElement("", "", ELEM_BATCH_START, atts);
-            handler.endElement("", "", ELEM_BATCH_START);
+            this.handler.startElement("", "", ELEM_BATCH_START, atts);
+            this.handler.endElement("", "", ELEM_BATCH_START);
 
             // Öffnendes Meldungen-Tag
-            handler.startElement("", "", ELEM_MELDUNGEN, null);
+            this.handler.startElement("", "", ELEM_MELDUNGEN, null);
         } catch (SAXException e) {
             throw new BatchrahmenProtokollException(NachrichtenSchluessel.ERR_BATCH_PROTOKOLL, e);
         }
@@ -186,10 +189,11 @@ public class XmlProtokollGenerator implements ProtokollGenerator {
 
     /**
      * Erzeugt Header-Element mit BatchID, Startzeit/Datum sowie Angabe der Parameter (Key/Value).
-     * 
+     *
      * @param protokoll
      *            Das BatchProtokoll
      */
+    @Override
     public void erzeugeEndeInfoElement(BatchErgebnisProtokoll protokoll) {
         SimpleDateFormat uhrzeitFormat = new SimpleDateFormat("HH:mm:ss");
         SimpleDateFormat datumFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -199,8 +203,8 @@ public class XmlProtokollGenerator implements ProtokollGenerator {
         atts.addAttribute("", "", ATTR_DATUM, "", datumFormat.format((protokoll.getEndeDatum())));
         atts.addAttribute("", "", ATTR_UHRZEIT, "", uhrzeitFormat.format((protokoll.getEndeDatum())));
         try {
-            handler.startElement("", "", ELEM_BATCH_ENDE, atts);
-            handler.endElement("", "", ELEM_BATCH_ENDE);
+            this.handler.startElement("", "", ELEM_BATCH_ENDE, atts);
+            this.handler.endElement("", "", ELEM_BATCH_ENDE);
         } catch (SAXException e) {
             throw new BatchrahmenProtokollException(NachrichtenSchluessel.ERR_BATCH_PROTOKOLL, e);
         }
@@ -211,7 +215,8 @@ public class XmlProtokollGenerator implements ProtokollGenerator {
      * @param meldung
      *            Die zu verarbeitende Meldung.
      */
-    public void erzeugeMeldung(VerarbeitungsMeldung meldung) {       
+    @Override
+    public void erzeugeMeldung(VerarbeitungsMeldung meldung) {
         AttributesImpl atts = new AttributesImpl();
         atts.clear();
         atts.addAttribute("", "", ATTR_ID, ATTR_TYPE_CDATA, nullSafeGet(meldung.getId()));
@@ -222,8 +227,8 @@ public class XmlProtokollGenerator implements ProtokollGenerator {
         atts.addAttribute("", "", ATTR_TYP, ATTR_TYPE_CDATA, nullSafeGet(meldung.getTyp().getKuerzel()));
         atts.addAttribute("", "", ATTR_TEXT, ATTR_TYPE_CDATA, nullSafeGet(meldung.getText()));
         try {
-            handler.startElement("", "", ATTR_MELDUNG, atts);
-            handler.endElement("", "", ATTR_MELDUNG);
+            this.handler.startElement("", "", ATTR_MELDUNG, atts);
+            this.handler.endElement("", "", ATTR_MELDUNG);
         } catch (SAXException e) {
             throw new BatchrahmenProtokollException(NachrichtenSchluessel.ERR_BATCH_PROTOKOLL, e);
         }
@@ -234,22 +239,24 @@ public class XmlProtokollGenerator implements ProtokollGenerator {
      * @param protokoll
      *            Das ErgebnisProtokoll.
      */
+    @Override
     public void erzeugeStatistik(BatchErgebnisProtokoll protokoll) {
         try {
-            handler.endElement("", "", ELEM_MELDUNGEN);
-            handler.startElement("", "", ELEM_STATISTIK, null);
+            this.handler.endElement("", "", ELEM_MELDUNGEN);
+            this.handler.startElement("", "", ELEM_STATISTIK, null);
             AttributesImpl atts = new AttributesImpl();
             for (StatistikEintrag statistikEintrag : protokoll.getStatistikEintraege()) {
                 atts.clear();
                 atts.addAttribute("", "", ATTR_ID, ATTR_TYPE_CDATA, nullSafeGet(statistikEintrag.getId()));
                 atts
-                    .addAttribute("", "", ATTR_TEXT, ATTR_TYPE_CDATA, nullSafeGet(statistikEintrag.getText()));
+                    .addAttribute("", "", ATTR_TEXT, ATTR_TYPE_CDATA,
+                        nullSafeGet(statistikEintrag.getText()));
                 atts.addAttribute("", "", ATTR_WERT, ATTR_TYPE_CDATA, Integer.toString(statistikEintrag
                     .getWert()));
-                handler.startElement("", "", ELEM_STATISTIK_EINTRAG, atts);
-                handler.endElement("", "", ELEM_STATISTIK_EINTRAG);
+                this.handler.startElement("", "", ELEM_STATISTIK_EINTRAG, atts);
+                this.handler.endElement("", "", ELEM_STATISTIK_EINTRAG);
             }
-            handler.endElement("", "", ELEM_STATISTIK);
+            this.handler.endElement("", "", ELEM_STATISTIK);
         } catch (SAXException e) {
             throw new BatchrahmenProtokollException(NachrichtenSchluessel.ERR_BATCH_PROTOKOLL, e);
         }
@@ -260,6 +267,7 @@ public class XmlProtokollGenerator implements ProtokollGenerator {
      * @param protokoll
      *            Das ErgebnisProtokoll.
      */
+    @Override
     public void erzeugeReturnCodeElement(BatchErgebnisProtokoll protokoll) {
         try {
             AttributesImpl atts = new AttributesImpl();
@@ -267,8 +275,8 @@ public class XmlProtokollGenerator implements ProtokollGenerator {
                 .getWert()));
             atts.addAttribute("", "", ATTR_TEXT, ATTR_TYPE_CDATA, nullSafeGet(protokoll.getReturnCode()
                 .getText()));
-            handler.startElement("", "", ELEM_RETURN_CODE, atts);
-            handler.endElement("", "", ELEM_RETURN_CODE);
+            this.handler.startElement("", "", ELEM_RETURN_CODE, atts);
+            this.handler.endElement("", "", ELEM_RETURN_CODE);
         } catch (SAXException e) {
             throw new BatchrahmenProtokollException(NachrichtenSchluessel.ERR_BATCH_PROTOKOLL, e);
         }
@@ -281,7 +289,7 @@ public class XmlProtokollGenerator implements ProtokollGenerator {
      *            String
      * @return Den String oder "".
      */
-    private static String nullSafeGet(String value) {
+    private static String nullSafeGet(@Nullable String value) {
         if (value == null) {
             return "";
         } else {
@@ -292,11 +300,12 @@ public class XmlProtokollGenerator implements ProtokollGenerator {
     /**
      * Schliesst das Schreiben der Protokolldatei ab.
      */
+    @Override
     public void close() {
         try {
-            handler.endElement("", "", ELEM_BATCH_ERGEBNIS);
-            handler.endDocument();
-            writer.close();
+            this.handler.endElement("", "", ELEM_BATCH_ERGEBNIS);
+            this.handler.endDocument();
+            this.writer.close();
         } catch (Throwable t) {
             throw new BatchrahmenProtokollException(NachrichtenSchluessel.ERR_BATCH_PROTOKOLL, t);
         }

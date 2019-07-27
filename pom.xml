@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>de.bund.bva.isyfact</groupId>
@@ -26,6 +27,15 @@
         </license>
     </licenses>
 
+    <dependencies>
+        <!-- https://mvnrepository.com/artifact/org.eclipse.jdt/org.eclipse.jdt.annotation -->
+        <dependency>
+            <groupId>org.eclipse.jdt</groupId>
+            <artifactId>org.eclipse.jdt.annotation</artifactId>
+            <version>2.2.300</version>
+        </dependency>
+    </dependencies>
+
     <modules>
         <module>isyfact-masterpom</module>
         <module>isyfact-masterpom-lib</module>
@@ -50,46 +60,46 @@
     </modules>
 
     <profiles>
- 	<profile>
+        <profile>
             <id>centralRelease</id>
             <build>
                 <plugins>
                     <plugin>
-                         <groupId>org.sonatype.plugins</groupId>
-                         <artifactId>nexus-staging-maven-plugin</artifactId>
-                         <version>1.6.8</version>
-                         <extensions>true</extensions>
-                         <configuration>
-                             <serverId>ossrh</serverId>
-                             <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-                             <autoReleaseAfterClose>false</autoReleaseAfterClose>
-                         </configuration>
-                     </plugin>
+                        <groupId>org.sonatype.plugins</groupId>
+                        <artifactId>nexus-staging-maven-plugin</artifactId>
+                        <version>1.6.8</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <serverId>ossrh</serverId>
+                            <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                            <autoReleaseAfterClose>false</autoReleaseAfterClose>
+                        </configuration>
+                    </plugin>
                 </plugins>
             </build>
         </profile>
         <profile>
-        <id>signing</id>
+            <id>signing</id>
             <build>
                 <plugins>
-                     <plugin>
+                    <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-jarsigner-plugin</artifactId>
                         <version>1.4</version>
                         <executions>
-                           <execution>
-                             <id>sign</id>
-                             <phase>verify</phase>
-                             <goals>
-                                <goal>sign</goal>
-                             </goals>
-                           </execution>
-                           <execution>
-                              <id>verify</id>
-                              <goals>
-                                 <goal>verify</goal>
-                              </goals>
-                           </execution>
+                            <execution>
+                                <id>sign</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>verify</id>
+                                <goals>
+                                    <goal>verify</goal>
+                                </goals>
+                            </execution>
                         </executions>
                         <configuration>
                             <keystore>${sign.keystore}</keystore>
@@ -104,27 +114,27 @@
                             <certs>true</certs>
                         </configuration>
                     </plugin>
-                     <plugin>
+                    <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
                         <version>1.6</version>
                         <executions>
-                           <execution>
-                           <id>sign-artifacts</id>
-                           <phase>verify</phase>
-                           <goals>
-                              <goal>sign</goal>
-                           </goals>
-                           </execution>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
                         </executions>
                         <configuration>
-                           <keyname>${gpg.keyname}</keyname>
-                           <passphrase>${gpg.passphrase}</passphrase>
+                            <keyname>${gpg.keyname}</keyname>
+                            <passphrase>${gpg.passphrase}</passphrase>
                         </configuration>
                     </plugin>
-               </plugins>
-           </build>
-       </profile>
+                </plugins>
+            </build>
+        </profile>
         <profile>
             <id>centralmavenrepo</id>
             <activation>
@@ -166,7 +176,7 @@
                     <name>Repository</name>
                     <url>${deploy-url-snapshot}</url>
                 </snapshotRepository>
-           </distributionManagement>
-       </profile>
+            </distributionManagement>
+        </profile>
     </profiles>
 </project>

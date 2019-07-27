@@ -18,6 +18,8 @@ package de.bund.bva.pliscommon.batchrahmen.batch.rahmen;
 
 import java.util.Date;
 
+import org.eclipse.jdt.annotation.Nullable;
+
 import de.bund.bva.pliscommon.batchrahmen.batch.exception.BatchAusfuehrungsException;
 import de.bund.bva.pliscommon.batchrahmen.batch.konfiguration.BatchKonfiguration;
 import de.bund.bva.pliscommon.batchrahmen.batch.protokoll.BatchErgebnisProtokoll;
@@ -84,7 +86,7 @@ public interface BatchAusfuehrungsBean {
      *         Wiederaufsetzen ueber Datenbankschluessel unterstuetzt wird. -Einem Kennzeichen dafuer, dass
      *         weitere Datensaetze zu verarbeiten sind.
      */
-    public VerarbeitungsErgebnis verarbeiteSatz() throws BatchAusfuehrungsException;
+    public @Nullable VerarbeitungsErgebnis verarbeiteSatz() throws BatchAusfuehrungsException;
 
     /**
      * Diese Methode wird im Kontext einer Transaktion aufgerufen. Sie wird aufgerufen, wenn der Batch beendet
@@ -141,5 +143,5 @@ public interface BatchAusfuehrungsBean {
      * @return Informationen zur Authentifizierung des Batches oder <code>null</code> falls keine
      *         Berechtigungsprüfung benötigt wird.
      */
-    public AuthenticationCredentials getAuthenticationCredentials(BatchKonfiguration konfiguration);
+    public @Nullable AuthenticationCredentials getAuthenticationCredentials(BatchKonfiguration konfiguration);
 }

@@ -27,6 +27,7 @@ import java.util.Map;
 
 import javax.xml.transform.TransformerConfigurationException;
 
+import org.eclipse.jdt.annotation.Nullable;
 import org.xml.sax.SAXException;
 
 import de.bund.bva.isyfact.logging.IsyLogger;
@@ -56,12 +57,12 @@ public class DefaultBatchErgebnisProtokoll implements BatchErgebnisProtokoll {
     /**
      * Liste der Statistik-Einträge.
      */
-    private Map<String, StatistikEintrag> statistik = new HashMap<String, StatistikEintrag>();
+    private Map<String, StatistikEintrag> statistik = new HashMap<>();
 
     /**
      * ReturnCode des Batchs.
      */
-    private BatchReturnCode returnCode;
+    private @Nullable BatchReturnCode returnCode;
 
     /**
      * Flag ob Fehlernachrichten enthalten sind.
@@ -76,27 +77,27 @@ public class DefaultBatchErgebnisProtokoll implements BatchErgebnisProtokoll {
     /**
      * FileOutputStream zum Protokollschreiben.
      */
-    private ProtokollGenerator protokollGenerator;
+    private @Nullable ProtokollGenerator protokollGenerator;
 
     /**
      * Startdatum des Batches.
      */
-    private Date startDatum;
+    private @Nullable Date startDatum;
 
     /**
      * Enddatum des Batches.
      */
-    private Date endeDatum;
+    private @Nullable Date endeDatum;
 
     /**
      * Die BatchID des ausgeführten Batches.
      */
-    private String batchId;
+    private @Nullable String batchId;
 
     /**
      * Die Parameter, mit denen der Batch gestartet wurde.
      */
-    private String[] parameter;
+    private String @Nullable [] parameter;
 
     /**
      * Flag ob die maximale Laufzeit überschritten wurde.
@@ -133,6 +134,7 @@ public class DefaultBatchErgebnisProtokoll implements BatchErgebnisProtokoll {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void setReturnCode(BatchReturnCode returnCode) {
         this.returnCode = returnCode;
     }
@@ -140,6 +142,7 @@ public class DefaultBatchErgebnisProtokoll implements BatchErgebnisProtokoll {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void registriereStatistikEintrag(StatistikEintrag initialEintrag) {
         if (initialEintrag.getReihenfolge() == 0) {
             initialEintrag.setReihenfolge(ermittleMaximaleReihenfolge() + 1);
@@ -162,6 +165,7 @@ public class DefaultBatchErgebnisProtokoll implements BatchErgebnisProtokoll {
     /**
      * {@inheritDoc}
      */
+    @Override
     public StatistikEintrag getStatistikEintrag(String id) {
         return this.statistik.get(id);
     }
@@ -170,26 +174,30 @@ public class DefaultBatchErgebnisProtokoll implements BatchErgebnisProtokoll {
      * {@inheritDoc}
      * @throws BatchProtokollException
      */
+    @Override
     public void ergaenzeMeldung(VerarbeitungsMeldung meldung) {
         if (meldung.getTyp().equals(MeldungTyp.FEHLER)) {
             this.enthaeltFehlermeldung = true;
         }
-        if (this.protokollGenerator != null) {
-            this.protokollGenerator.erzeugeMeldung(meldung);
-            this.protokollGenerator.flusheOutput();
+        ProtokollGenerator protokollGenerator2 = this.protokollGenerator;
+        if (protokollGenerator2 != null) {
+            protokollGenerator2.erzeugeMeldung(meldung);
+            protokollGenerator2.flusheOutput();
         }
     }
 
     /**
      * {@inheritDoc}
      */
-    public BatchReturnCode getReturnCode() {
+    @Override
+    public @Nullable BatchReturnCode getReturnCode() {
         return this.returnCode;
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
     public Map<String, StatistikEintrag> getStatistik() {
         return this.statistik;
     }
@@ -197,6 +205,7 @@ public class DefaultBatchErgebnisProtokoll implements BatchErgebnisProtokoll {
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean enthaeltFehlerNachrichten() {
         return this.enthaeltFehlermeldung;
     }
@@ -204,8 +213,9 @@ public class DefaultBatchErgebnisProtokoll implements BatchErgebnisProtokoll {
     /**
      * {@inheritDoc}
      */
+    @Override
     public List<StatistikEintrag> getStatistikEintraege() {
-        List<StatistikEintrag> result = new ArrayList<StatistikEintrag>(this.statistik.values());
+        List<StatistikEintrag> result = new ArrayList<>(this.statistik.values());
         Collections.sort(result);
         return result;
     }
@@ -214,7 +224,8 @@ public class DefaultBatchErgebnisProtokoll implements BatchErgebnisProtokoll {
      * Liefert das Feld 'startDatum' zurück.
      * @return Wert von startDatum
      */
-    public Date getStartDatum() {
+    @Override
+    public @Nullable Date getStartDatum() {
         return this.startDatum;
     }
 
@@ -223,6 +234,7 @@ public class DefaultBatchErgebnisProtokoll implements BatchErgebnisProtokoll {
      * @param startDatum
      *            Neuer Wert für startDatum
      */
+    @Override
     public void setStartDatum(Date startDatum) {
         this.startDatum = startDatum;
     }
@@ -231,7 +243,8 @@ public class DefaultBatchErgebnisProtokoll implements BatchErgebnisProtokoll {
      * Liefert das Feld 'endeDatum' zurück.
      * @return Wert von endeDatum
      */
-    public Date getEndeDatum() {
+    @Override
+    public @Nullable Date getEndeDatum() {
         return this.endeDatum;
     }
 
@@ -240,6 +253,7 @@ public class DefaultBatchErgebnisProtokoll implements BatchErgebnisProtokoll {
      * @param endeDatum
      *            Neuer Wert für endeDatum
      */
+    @Override
     public void setEndeDatum(Date endeDatum) {
         this.endeDatum = endeDatum;
     }
@@ -248,7 +262,8 @@ public class DefaultBatchErgebnisProtokoll implements BatchErgebnisProtokoll {
      * Liefert das Feld 'batchId' zurück.
      * @return Wert von batchId
      */
-    public String getBatchId() {
+    @Override
+    public @Nullable String getBatchId() {
         return this.batchId;
     }
 
@@ -257,6 +272,7 @@ public class DefaultBatchErgebnisProtokoll implements BatchErgebnisProtokoll {
      * @param batchId
      *            Neuer Wert für batchId
      */
+    @Override
     public void setBatchId(String batchId) {
         this.batchId = batchId;
     }
@@ -265,7 +281,8 @@ public class DefaultBatchErgebnisProtokoll implements BatchErgebnisProtokoll {
      * Liefert das Feld 'parameter' zurück.
      * @return Wert von parameter
      */
-    public String[] getParameter() {
+    @Override
+    public String @Nullable [] getParameter() {
         return this.parameter;
     }
 
@@ -274,6 +291,7 @@ public class DefaultBatchErgebnisProtokoll implements BatchErgebnisProtokoll {
      * @param parameter
      *            Neuer Wert für parameter
      */
+    @Override
     public void setParameter(String[] parameter) {
         this.parameter = parameter;
     }
@@ -282,13 +300,15 @@ public class DefaultBatchErgebnisProtokoll implements BatchErgebnisProtokoll {
      *
      * {@inheritDoc}.
      */
+    @Override
     public void batchEnde() {
         setEndeDatum(new Date());
-        if (this.protokollGenerator != null) {
-            this.protokollGenerator.erzeugeStatistik(this);
-            this.protokollGenerator.erzeugeEndeInfoElement(this);
-            this.protokollGenerator.erzeugeReturnCodeElement(this);
-            this.protokollGenerator.close();
+        ProtokollGenerator protokollGenerator2 = this.protokollGenerator;
+        if (protokollGenerator2 != null) {
+            protokollGenerator2.erzeugeStatistik(this);
+            protokollGenerator2.erzeugeEndeInfoElement(this);
+            protokollGenerator2.erzeugeReturnCodeElement(this);
+            protokollGenerator2.close();
         }
     }
 
@@ -296,6 +316,7 @@ public class DefaultBatchErgebnisProtokoll implements BatchErgebnisProtokoll {
      *
      * {@inheritDoc}
      */
+    @Override
     public void batchStart(BatchKonfiguration konfiguration, String[] args) {
         setStartDatum(new Date());
         setBatchId(konfiguration.getProperties().getProperty("BatchId"));
@@ -310,6 +331,7 @@ public class DefaultBatchErgebnisProtokoll implements BatchErgebnisProtokoll {
      * Liefert das Feld 'isBatchAbgebrochen' zurück.
      * @return Wert von isBatchAbgebrochen
      */
+    @Override
     public boolean isBatchAbgebrochen() {
         return this.isBatchAbgebrochen;
     }
@@ -319,6 +341,7 @@ public class DefaultBatchErgebnisProtokoll implements BatchErgebnisProtokoll {
      * @param isBatchAbgebrochen
      *            Neuer Wert für isBatchAbgebrochen
      */
+    @Override
     public void setBatchAbgebrochen(boolean isBatchAbgebrochen) {
         this.isBatchAbgebrochen = isBatchAbgebrochen;
     }
@@ -327,6 +350,7 @@ public class DefaultBatchErgebnisProtokoll implements BatchErgebnisProtokoll {
      * Liefert das Feld 'maximaleLaufzeitUeberschritten' zurück.
      * @return Wert von maximaleLaufzeitUeberschritten
      */
+    @Override
     public boolean isMaximaleLaufzeitUeberschritten() {
         return this.maximaleLaufzeitUeberschritten;
     }
@@ -336,6 +360,7 @@ public class DefaultBatchErgebnisProtokoll implements BatchErgebnisProtokoll {
      * @param maximaleLaufzeitUeberschritten
      *            Neuer Wert für maximaleLaufzeitUeberschritten
      */
+    @Override
     public void setMaximaleLaufzeitUeberschritten(boolean maximaleLaufzeitUeberschritten) {
         this.maximaleLaufzeitUeberschritten = maximaleLaufzeitUeberschritten;
     }

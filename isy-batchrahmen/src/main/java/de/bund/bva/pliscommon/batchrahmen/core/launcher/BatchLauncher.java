@@ -26,10 +26,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.core.env.PropertySource;
 
-import ch.qos.logback.classic.LoggerContext;
-import ch.qos.logback.classic.joran.JoranConfigurator;
-import ch.qos.logback.core.joran.spi.JoranException;
-
 import de.bund.bva.isyfact.logging.IsyLogger;
 import de.bund.bva.isyfact.logging.IsyLoggerFactory;
 import de.bund.bva.isyfact.logging.LogKategorie;
@@ -50,6 +46,10 @@ import de.bund.bva.pliscommon.batchrahmen.core.rahmen.Batchrahmen;
 import de.bund.bva.pliscommon.batchrahmen.core.rahmen.impl.BatchrahmenPropertySource;
 import de.bund.bva.pliscommon.sicherheit.common.exception.AutorisierungFehlgeschlagenException;
 import de.bund.bva.pliscommon.sicherheit.common.exception.SicherheitTechnicalRuntimeException;
+
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.classic.joran.JoranConfigurator;
+import ch.qos.logback.core.joran.spi.JoranException;
 
 /**
  * Diese Klasse startet einen Batch (siehe {@link Batchrahmen} mit der ï¿½bergebenen Konfiguration. Die
